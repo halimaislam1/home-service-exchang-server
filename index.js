@@ -28,13 +28,22 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
  
-    const serviceCollection = client.db('homeServices').collection('allServices')
+    const serviceCollection = client.db('homeServices').collection('allService')
     
-     //service related api
+     //services
     app.get('/services',async(req, res) => {
         const result = await serviceCollection.find().toArray();
         res.send(result)
     })
+    
+    //post services
+    app.post("/services", async (req, res) => {
+        const user = req.body;
+        console.log(user);
+        const result = await serviceCollection.insertOne(user);
+        console.log(result);
+        res.send(result);
+      });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
