@@ -28,7 +28,8 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
  
-    const serviceCollection = client.db('homeServices').collection('allService')
+    const serviceCollection = client.db('homeServices').collection('allService');
+    const bookingCollection = client.db('homeServices').collection('bookings')
     
      //services
     app.get('/services',async(req, res) => {
@@ -43,7 +44,27 @@ async function run() {
       const result = await serviceCollection.findOne(query)
       res.send(result)
     })
+
+    //purchase
+    app.get('/purchase', async(req, res) => {
+      console.log(req.query?.email);
+      let query = {};
+      if(req.query){
+        query = {email:req.query.email}
+      }
+      const result = await bookingCollection.find(query).toArray();
+      res.send(result)
+    })
     
+    // purchase
+      app.post('/purchase', async(req, res) =>{
+        const booking = req.body;
+        console.log(booking);
+        const result = await bookingCollection.insertOne(booking)
+        res.send(result)
+      })
+
+
     //post services
     app.post("/services", async (req, res) => {
         const user = req.body;
@@ -52,6 +73,8 @@ async function run() {
         console.log(result);
         res.send(result);
       });
+
+      
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
