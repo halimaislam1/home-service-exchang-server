@@ -31,15 +31,21 @@ async function run() {
     const serviceCollection = client.db('homeServices').collection('allService');
     const bookingCollection = client.db('homeServices').collection('bookings')
     
+      //post services
+    app.post("/services", async (req, res) => {
+      const user = req.body;
+      console.log(user);
+      const result = await serviceCollection.insertOne(user);
+      console.log(result);
+      res.send(result);
+    });
+
      //services
     app.get('/services',async(req, res) => {
         const result = await serviceCollection.find().toArray();
         res.send(result)
     })
-
     
-
-
     //get single services by id
     app.get('/services/:id',async(req, res) => {
       const id = req.params.id;
@@ -47,6 +53,27 @@ async function run() {
       const result = await serviceCollection.findOne(query)
       res.send(result)
     })
+
+    //update services
+   app.get('/services',async(req, res) => {
+    let query = {}
+    if(req.query?.email){
+      query = {email: req.query?.email}
+    }
+    const result = await serviceCollection.find(query).toArray()
+    console.log(req.query.email)
+      res.send(result)
+
+   })
+
+    app.get('/purchase/:id',async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await serviceCollection.findOne(query)
+      res.send(result)
+    })
+
+
 
     //purchase
     app.get('/purchase', async(req, res) => {
@@ -58,6 +85,8 @@ async function run() {
       const result = await bookingCollection.find(query).toArray();
       res.send(result)
     })
+
+
     
     // purchase
       app.post('/purchase', async(req, res) =>{
@@ -75,14 +104,7 @@ async function run() {
       })
 
 
-    //post services
-    app.post("/services", async (req, res) => {
-        const user = req.body;
-        console.log(user);
-        const result = await serviceCollection.insertOne(user);
-        console.log(result);
-        res.send(result);
-      });
+   
 
       
 
